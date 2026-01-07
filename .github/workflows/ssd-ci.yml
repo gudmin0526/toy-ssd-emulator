@@ -1,0 +1,22 @@
+name: ssd-ci
+on:
+  push:
+    paths:
+      - "ssd/**"
+      - "tests/**"
+      - "Makefile"
+  pull_request:
+    paths:
+      - "ssd/**"
+      - "tests/**"
+      - "Makefile"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential make
+      - run: make -C tests unit
