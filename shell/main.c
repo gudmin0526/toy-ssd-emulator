@@ -8,48 +8,7 @@
 
 #define MAX_CMD_SIZE 100
 
-int control_ssd_command()
-{
-    char *mode = strtok(NULL, " ");
-
-    if (mode == NULL)
-    {
-        return -1;
-    }
-
-    if (strcmp(mode, "W") == 0)
-    {
-        char *lba = strtok(NULL, " ");
-        char *val = strtok(NULL, " ");
-        do_write(lba, val);
-    }
-    else if (strcmp(mode, "R") == 0)
-    {
-        char *lba = strtok(NULL, " ");
-        do_read(lba);
-    }
-    else if (strcmp(mode, "FW") == 0)
-    {
-        char *val = strtok(NULL, " ");
-        do_fullwrite(val);
-    }
-    else if (strcmp(mode, "FR") == 0)
-    {
-        do_fullread();
-    }
-    else if (strcmp(mode, "D") == 0)
-    {
-        char *lba = strtok(NULL, " ");
-        do_delete(lba);
-    }
-
-    else
-    {
-        return -1;
-    }
-
-    return 0;
-}
+int control_ssd_command();
 
 int main()
 {
@@ -97,5 +56,48 @@ int main()
             printf("Invalid SSD command: %s\n", cmd);
         }
     }
+    return 0;
+}
+
+int control_ssd_command()
+{
+    char *mode = strtok(NULL, " ");
+
+    if (mode == NULL)
+    {
+        return -1;
+    }
+
+    if (strcmp(mode, "W") == 0)
+    {
+        char *lba = strtok(NULL, " ");
+        char *val = strtok(NULL, " ");
+        do_write(lba, val);
+    }
+    else if (strcmp(mode, "R") == 0)
+    {
+        char *lba = strtok(NULL, " ");
+        do_read(lba);
+    }
+    else if (strcmp(mode, "FW") == 0)
+    {
+        char *val = strtok(NULL, " ");
+        do_fullwrite(val);
+    }
+    else if (strcmp(mode, "FR") == 0)
+    {
+        do_fullread();
+    }
+    else if (strcmp(mode, "D") == 0)
+    {
+        char *lba = strtok(NULL, " ");
+        do_delete(lba);
+    }
+
+    else
+    {
+        return -1;
+    }
+
     return 0;
 }
