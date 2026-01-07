@@ -6,3 +6,7 @@ main.out.yml
 nand.txt
 *.exe
 ssd.exe
+ssd/ssd.exe
+shell/shell.exe
+*result.txt
+*ssd.txt
