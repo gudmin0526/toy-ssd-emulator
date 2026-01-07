@@ -119,10 +119,29 @@ ret_t read_block(uint8_t addr, int32_t* out_data) {
 
     // 주소값이랑 데이터 값 출력
     char log_buf[50];
-    sprintf(log_buf, "Read Address: %d, Data: 0x08X", addr, *out_data);
+    sprintf(log_buf, "Read Address: %d, Data: 0x08X%d", addr, *out_data);
     log_msg(log_buf);
     
     return 0;
+}
+
+void fullread_block() {
+    int32_t tempt_data;
+    uint8_t status;
+
+    for (uint8_t i = 0; i < NUM_BLOCK; i++) {
+        status = read_block(i, &tempt_data);
+
+        if (status == 0) {
+            // LBA 주소와 데이터를 형식에 맞춰 출력
+            printf("LBA %02d: 0x%08X\n", i, tempt_data);
+        } else {
+            // read_block에서 에러 반환 시
+            printf("LBA %02d: [READ ERROR]\n", i);
+        }
+    }
+
+    log_msg("Full Read Operation Completed.");
 }
 
 void dump(void) {
