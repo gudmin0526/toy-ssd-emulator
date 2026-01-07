@@ -1,15 +1,9 @@
 name: ssd-ci
 on:
   push:
-    paths:
-      - "ssd/**"
-      - "tests/**"
-      - "Makefile"
+    branches: ["main"]
   pull_request:
-    paths:
-      - "ssd/**"
-      - "tests/**"
-      - "Makefile"
+        branches: ["main"]
 
 jobs:
   test:
