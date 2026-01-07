@@ -146,3 +146,65 @@ static uint8_t integrity_check(void) {
 uint8_t delete_block(uint8_t addr) {
     
 }
+
+#ifndef SSD_H
+#define SSD_H
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+#define SSD_SIZE 100
+
+typedef struct block {
+	int32_t data;
+} block_t;
+
+uint8_t write_block(uint8_t addr, int32_t data);
+uint8_t read_block(uint8_t addr, int32_t* out_data);
+uint8_t delete_block(uint8_t addr);
+
+#endif
+
+uint8_t read_block(uint8_t addr, int32_t* out_data) {
+    // 유효성 검사
+    if (addr >= SSD_SIZE) {
+        return 1; // Error: return 1 
+    }
+    // SSD 메모리 배열 초기화 
+    int32_t virtual_nand[SSD_SIZE];
+
+    for (int i = 0; i < SSD_SIZE; i++) {
+        virtual_nand[i].data = 0; // 초기값 설정
+    }
+
+    // nand.txt 파일을 읽어 배열에 저장
+    FILE* fp_nand = fopen("nand.txt", "r");
+    if (fp_nand != NULL) {
+        char line[12];
+        int idx = 0;
+        while (fgets(line, sizeof(line), fp_nand) && idx < SSD_SIZE) {
+            virtual_nand[idx].data = (int32_t)strtoul(line, NULL, 16);  // 16진수 숫자로 변환
+            idx++;
+        }
+        fclose(fp_nand);
+    }
+    // 데이터를 출력 파라미터에 저장
+    *out_data = virtual_nand[addr].data;
+
+    //result.txt에 기록 (덮어 씌우는 방식)
+    FILE* fp_res = fopen("result.txt", "w");
+    if (fp_res != NULL) {
+        fprintf(fp_res, "0x%08X\n", *out_data); 
+        fclose(fp_res);
+    }
+
+    
+
+    return 0;
+}
+
+
+
