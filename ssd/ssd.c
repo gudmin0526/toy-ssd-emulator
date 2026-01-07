@@ -1,8 +1,11 @@
 #include "ssd.h"
 
 static ssd_t SSD;
-/* write, delete 업데이트 발생 시 1 증가 */
 static uint32_t log_seq = 0;
+
+static void log_msg(const char* msg);
+static ret_t flush_ssd(void);
+static uint8_t integrity_check(void);
 
 ret_t write_block(uint8_t addr, int32_t data) {
     // SSD[addr].data = data;
@@ -23,14 +26,6 @@ ret_t write_block(uint8_t addr, int32_t data) {
     // printf("write_block: addr: %d, data: %d\n", addr, SSD[addr].data);
     printf("write_block: addr: %d, data: %d\n", addr, SSD.block[addr].data);
     return result;
-}
-
-static void log_msg(const char* msg) {
-#if LOG
-    FILE *log_fp = fopen("ssd.log", "a");
-    fprintf(log_fp, "[%lld] %s\n", log_seq, msg);
-    fclose(log_fp);
-#endif
 }
 
 ret_t init_ssd(void) {
@@ -61,24 +56,6 @@ ret_t init_ssd(void) {
     sleep_ms(1000);
 
     return 0;
-}
-
-static ret_t flush_ssd(void) {
-    /* 기존에 존재하는 파일 오픈 */
-    FILE *ssd_fp = fopen("ssd.txt", "rb+");
-
-    if (ssd_fp == NULL) {
-        /* 파일 없으면 실패 반환 */
-        return WRITE_FAIL;
-    }
-    fwrite(SSD.block, sizeof(block_t), NUM_BLOCK, ssd_fp);
-    fclose(ssd_fp);
-
-    return SSD_OK;
-}
-
-static uint8_t integrity_check(void) {
-
 }
 
 ret_t delete_block(uint8_t addr) {
@@ -125,9 +102,35 @@ ret_t read_block(uint8_t addr, int32_t* out_data) {
     return 0;
 }
 
-void dump(void) {
+static void log_msg(const char* msg) {
+#if LOG
+    FILE *log_fp = fopen("ssd.log", "a");
+    fprintf(log_fp, "[%lld] %s\n", log_seq, msg);
+    fclose(log_fp);
+#endif
+}
+
+static void dump(void) {
     printf("---dump---\n");
     for (int i = 0; i < MAX_SIZE; ++i) {
         printf("%d: %d\n", i, SSD.block[i].data);
     }
+}
+
+static ret_t flush_ssd(void) {
+    /* 기존에 존재하는 파일 오픈 */
+    FILE *ssd_fp = fopen("ssd.txt", "rb+");
+
+    if (ssd_fp == NULL) {
+        /* 파일 없으면 실패 반환 */
+        return WRITE_FAIL;
+    }
+    fwrite(SSD.block, sizeof(block_t), NUM_BLOCK, ssd_fp);
+    fclose(ssd_fp);
+
+    return SSD_OK;
+}
+
+static uint8_t integrity_check(void) {
+
 }
