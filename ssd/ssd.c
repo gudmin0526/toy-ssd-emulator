@@ -165,6 +165,7 @@ typedef struct block {
 uint8_t write_block(uint8_t addr, int32_t data);
 uint8_t read_block(uint8_t addr, int32_t* out_data);
 uint8_t delete_block(uint8_t addr);
+uint8_t fullread_block(uint8_t addr);
 
 #endif
 
