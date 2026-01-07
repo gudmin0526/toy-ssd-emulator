@@ -94,9 +94,47 @@ void do_delete(char *lba)
     execute_ssd(args);
 }
 
+void do_fullwrite(char *lba, char *val)
+{
+    if (!is_valid_lba(lba) || !is_valid_value(val))
+    {
+        printf("INVALID COMMAND\n");
+        return;
+    }
+    char args[100];
+    sprintf(args, "W %s %s", lba, val);
+    execute_ssd(args);
+}
+
+void do_fullread(char *lba)
+{
+    if (!is_valid_lba(lba))
+    {
+        printf("INVALID COMMAND\n");
+        return;
+    }
+
+    char args[50];
+    sprintf(args, "R %s", lba);
+    execute_ssd(args);
+
+    // ssd가 result.txt에 쓴 걸 읽어와서 출력
+    FILE *fp = fopen("result.txt", "r");
+    if (fp != NULL)
+    {
+        char buffer[100];
+        if (fgets(buffer, sizeof(buffer), fp) != NULL)
+        {
+            printf("%s", buffer);
+        }
+        printf("\n");
+        fclose(fp);
+    }
+}
+
 void run_testapp1()
 {
-    printf("--- TestApp2 Start ---\n");
+    printf("--- TestApp1 Start ---\n");
 
     for (int loop = 0; loop < 30; loop++)
     {
