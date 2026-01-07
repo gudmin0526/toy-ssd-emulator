@@ -5,10 +5,9 @@ static block_t SSD[NUM_BLOCK] = { 0,  };
 
 /* write, delete 업데이트 발생 시 1 증가 */
 static uint8_t dirty_count = 0;
-
 static uint32_t log_seq = 0;
 
-void log_msg(const char* msg) {
+static void log_msg(const char* msg) {
 #if LOG 1
     FILE *log_fp = fopen("ssd.log", "a");
     fprintf(log_fp, "[%lld] %s\n", log_seq, msg);
@@ -49,7 +48,7 @@ uint8_t init_ssd(void) {
     return 0;
 }
 
-uint8_t flush_ssd(void) {
+static uint8_t flush_ssd(void) {
     /* 기존에 존재하는 파일 오픈 */
     FILE *ssd_fp = fopen("ssd.txt", "rb+");
 
