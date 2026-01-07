@@ -7,7 +7,7 @@ block_t SSD[MAX_SIZE];
 
 uint8_t write_block(uint8_t addr, int32_t data) {
     SSD[addr].data = data;
-    printf("%d\n", SSD[addr].data);
+    printf("write_block: addr: %d, data: %d\n", addr, SSD[addr].data);
 
     return 0;
 }
