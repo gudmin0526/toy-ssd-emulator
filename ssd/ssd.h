@@ -28,6 +28,8 @@ typedef enum ret {
 	WRITE_OUT_OF_INDEX = 2,
 	DELETE_FAIL_NOT_IN_USED = 3,
 	DELETE_FAIL_CLEAR_FAILED = 4,
+    READ_FAIL = 5,
+    READ_OUT_OF_INDEX = 6,
 } ret_t;
 
 typedef struct block {
