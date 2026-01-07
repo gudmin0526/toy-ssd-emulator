@@ -95,7 +95,7 @@ void do_delete(char *lba)
     }
 
     char args[100];
-    sprintf(args, "W %s 0x00000000", lba);
+    sprintf(args, "D %s 0x00000000", lba);
 
     execute_ssd(args);
 }
