@@ -4,3 +4,5 @@ tasks.json
 main.out
 Info.plist
 main.out.yml
+main.c
+nand.txt
