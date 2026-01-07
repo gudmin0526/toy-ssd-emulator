@@ -62,5 +62,6 @@ ret_t init_ssd(void);
 ret_t write_block(uint8_t addr, int32_t data);
 ret_t read_block  (uint8_t addr, int32_t* out_data);
 ret_t delete_block(uint8_t addr);
+void fullread_block();
 
 #endif
