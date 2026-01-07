@@ -8,15 +8,12 @@ static uint8_t dirty_count = 0;
 static uint32_t log_seq = 0;
 
 static void log_msg(const char* msg) {
-#if LOG 1
     FILE *log_fp = fopen("ssd.log", "a");
     fprintf(log_fp, "[%lld] %s\n", log_seq, msg);
     fclose(log_fp);
-#endif
 }
 
 uint8_t init_ssd(void) {
-
     /* 전역 변수 초기화 */
     memset(SSD, 0, sizeof(block_t) * NUM_BLOCK);
     memset(used, 0, sizeof(uint32_t) * NUM_META_BLOCK);
@@ -43,6 +40,8 @@ uint8_t init_ssd(void) {
     }
     fclose(ssd_fp);
 
+    // TBD: SSD 컨트롤러 만들어서 해보기
+
     sleep_ms(1000);
 
     return 0;
@@ -58,12 +57,12 @@ static uint8_t flush_ssd(void) {
     }
     fwrite(SSD, sizeof(block_t), NUM_BLOCK, ssd_fp);
     fclose(ssd_fp);
-
+    
     return 0;
 }
 
 static uint8_t integrity_check(void) {
-
+    // TBD
 }
 
 uint8_t delete_block(uint8_t addr) {
