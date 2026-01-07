@@ -40,17 +40,16 @@ void execute_ssd(char *args)
     system(cmd);
 }
 
-void do_read(char *str)
+void do_read(char *lba)
 {
-    if (!is_valid_lba(*str))
+    if (!is_valid_lba(*lba))
     {
         printf("INVALID ADDRESS\n (0~99 allowed)\n");
         return;
     }
 
-    int lba = atoi(str);
     char args[50];
-    sprintf(args, "R %d", lba);
+    sprintf(args, "R %s", lba);
     execute_ssd(args);
 
     // ssd가 result.txt에 쓴 걸 읽어와서 출력
@@ -83,9 +82,7 @@ void do_write(char *lba, char *val)
 
     char args[100];
 
-    int i = atoi(lba);
-    int j = atoi(val);
-    sprintf(args, "W %d %d", i, j);
+    sprintf(args, "W %s %s", lba, val);
     execute_ssd(args);
 }
 
@@ -98,8 +95,7 @@ void do_delete(char *lba)
     }
 
     char args[100];
-    int i = atoi(lba);
-    sprintf(args, "W %d 0x00000000", i);
+    sprintf(args, "W %s 0x00000000", lba);
 
     execute_ssd(args);
 }
@@ -113,8 +109,7 @@ void do_fullwrite(char *val)
     }
     char args[100];
 
-    int j = atoi(val);
-    sprintf(args, "FW");
+    sprintf(args, "FW %s", val);
     execute_ssd(args);
 }
 
