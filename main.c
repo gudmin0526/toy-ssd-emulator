@@ -45,6 +45,15 @@ int main()
                 char *lba = strtok(NULL, " ");
                 do_read(lba);
             }
+            else if (strcmp(mode, "FW") == 0)
+            {
+                char *val = strtok(NULL, " ");
+                do_fullwrite(val);
+            }
+            else if (strcmp(mode, "FR") == 0)
+            {
+                do_fullread();
+            }
             else
             {
                 printf("INVALID COMMAND\n");

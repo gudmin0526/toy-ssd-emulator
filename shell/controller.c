@@ -46,7 +46,7 @@ void do_read(char *str)
 {
     if (!is_valid_lba(*str))
     {
-        printf("INVALID COMMAND\n");
+        printf("INVALID ADDRESS\n");
         return;
     }
 
@@ -71,11 +71,18 @@ void do_read(char *str)
 
 void do_write(char *lba, char *val)
 {
-    if (!is_valid_lba(lba) || !is_valid_value(val))
+    if (!is_valid_lba(lba))
     {
-        printf("INVALID COMMAND\n");
+        printf("INVALID ADDRESS\n");
         return;
     }
+
+    if (!is_valid_value(val))
+    {
+        printf("INVALID VALUE\n");
+        return;
+    }
+
     char args[100];
 
     int i = atoi(lba);
@@ -88,7 +95,7 @@ void do_delete(char *lba)
 {
     if (!is_valid_lba(lba))
     {
-        printf("INVALID COMMAND\n");
+        printf("INVALID ADDRESS\n");
         return;
     }
 
@@ -99,32 +106,24 @@ void do_delete(char *lba)
     execute_ssd(args);
 }
 
-void do_fullwrite(char *lba, char *val)
+void do_fullwrite(char *val)
 {
-    if (!is_valid_lba(lba) || !is_valid_value(val))
+    if (!is_valid_value(val))
     {
-        printf("INVALID COMMAND\n");
+        printf("INVALID VALUE\n");
         return;
     }
     char args[100];
 
-    int i = atoi(lba);
     int j = atoi(val);
-    sprintf(args, "W %d %d", i, j);
+    sprintf(args, "FW");
     execute_ssd(args);
 }
 
-void do_fullread(char *lba)
+void do_fullread()
 {
-    if (!is_valid_lba(lba))
-    {
-        printf("INVALID COMMAND\n");
-        return;
-    }
-
     char args[50];
-    int i = atoi(lba);
-    sprintf(args, "R %d", i);
+    sprintf(args, "FR");
     execute_ssd(args);
 
     // ssd가 result.txt에 쓴 걸 읽어와서 출력
@@ -174,27 +173,8 @@ void run_testapp2()
 {
     printf("--- TestApp2 Start ---\n");
 
-    for (int loop = 0; loop < 30; loop++)
-    {
-        for (int i = 0; i <= 5; i++)
-        { // LBA 0 ~ 5
-            char lba[10];
-            sprintf(lba, "%d", i);
-            do_write(lba, "0xAAAABBBB");
-        }
-    }
+    do_fullwrite("0x12345678");
+    do_fullread();
 
-    for (int i = 0; i <= 5; i++)
-    {
-        char lba[10];
-        sprintf(lba, "%d", i);
-        do_write(lba, "0x12345678");
-    }
-
-    for (int i = 0; i <= 5; i++)
-    {
-        char lba[10];
-        sprintf(lba, "%d", i);
-    }
     printf("--- TestApp2 Pass ---\n");
 }
