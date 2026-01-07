@@ -170,29 +170,25 @@ uint8_t delete_block(uint8_t addr);
 
 uint8_t read_block(uint8_t addr, int32_t* out_data) {
     // 유효성 검사
-    if (addr >= SSD_SIZE) {
+    if (addr >= NUM_BLOCK) {
         return 1; // Error: return 1 
     }
-    // SSD 메모리 배열 초기화 
-    int32_t virtual_nand[SSD_SIZE];
 
-    for (int i = 0; i < SSD_SIZE; i++) {
-        virtual_nand[i].data = 0; // 초기값 설정
-    }
-
-    // nand.txt 파일을 읽어 배열에 저장
-    FILE* fp_nand = fopen("nand.txt", "r");
-    if (fp_nand != NULL) {
-        char line[12];
-        int idx = 0;
-        while (fgets(line, sizeof(line), fp_nand) && idx < SSD_SIZE) {
-            virtual_nand[idx].data = (int32_t)strtoul(line, NULL, 16);  // 16진수 숫자로 변환
-            idx++;
-        }
-        fclose(fp_nand);
-    }
     // 데이터를 출력 파라미터에 저장
-    *out_data = virtual_nand[addr].data;
+    *out_data = SSD[addr].data;
+
+    // 메모리(SSD 배열)에 로드된 데이터가 있으므로 바로 메모리에서 바로 읽기 위해 밑에 코드 삭제
+    // nand.txt 파일을 읽어 배열에 저장
+    // FILE* fp_nand = fopen("nand.txt", "r");
+    // if (fp_nand != NULL) {
+    //     char line[12];
+    //     int idx = 0;
+    //     while (fgets(line, sizeof(line), fp_nand) && idx < NUM_BLOCK) {
+    //         SSD[idx].data = (int32_t)strtoul(line, NULL, 16);  // 16진수 숫자로 변환
+    //         idx++;
+    //     }
+    //     fclose(fp_nand);
+    // }
 
     //result.txt에 기록 (덮어 씌우는 방식)
     FILE* fp_res = fopen("result.txt", "w");
@@ -201,8 +197,10 @@ uint8_t read_block(uint8_t addr, int32_t* out_data) {
         fclose(fp_res);
     }
 
+    char log_buf[50];
+    sprintf(log_buf, "Read Address: %d, Data: 0x08X", addr, *out_data);
+    log_msg(log_buf);
     
-
     return 0;
 }
 
