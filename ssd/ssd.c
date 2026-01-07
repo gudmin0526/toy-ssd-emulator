@@ -88,7 +88,7 @@ ret_t read_block(uint8_t addr, int32_t* out_data) {
     *out_data = SSD.block[addr].data;
 
     //result.txt에 기록 (덮어 씌우는 방식)
-    FILE* fp_res = fopen("result.txt", "w");
+    FILE* fp_res = fopen("result.txt", "w+");
     if (fp_res != NULL) {
         fprintf(fp_res, "0x%08X\n", *out_data); 
         fclose(fp_res);
