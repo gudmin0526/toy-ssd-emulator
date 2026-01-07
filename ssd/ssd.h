@@ -1,5 +1,5 @@
 #ifndef __SSD_H__
-#define __SSD_H
+#define __SSD_H__
 
 #define MAX_SIZE 100
 #include <stdio.h>
@@ -35,5 +35,8 @@ uint8_t read_block  (uint8_t addr, int32_t* out_data);
 uint8_t delete_block(uint8_t addr);
 
 void dump(void);
+static uint8_t flush_ssd(void);
+static uint8_t integrity_check(void);
+uint8_t delete_block(uint8_t addr);
 
 #endif

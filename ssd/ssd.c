@@ -10,23 +10,15 @@ static block_t SSD[NUM_BLOCK] = { 0,  };
 static uint8_t dirty_count = 0;
 static uint32_t log_seq = 0;
 
-uint8_t write_block(uint8_t addr, int32_t data) {
+uint8_t write_block(uint8_t addr, int32_t data) {    
     SSD[addr].data = data;
+    flush_ssd();
+
     printf("write_block: addr: %d, data: %d\n", addr, SSD[addr].data);
-
-    // 읽기
-    FILE *fp = fopen("test.txt", "r+b");
-    if (!fp) return 1;
-
-    long offset = addr * (sizeof(int32_t) / sizeof(int8_t));
-    fseek(fp, offset, SEEK_SET);
-
-    fwrite(&data, sizeof(int32_t), 1, fp);
-    fclose(fp);  
 }
 
 static void log_msg(const char* msg) {
-#if LOG 1
+#if LOG
     FILE *log_fp = fopen("ssd.log", "a");
     fprintf(log_fp, "[%lld] %s\n", log_seq, msg);
     fclose(log_fp);
@@ -34,7 +26,6 @@ static void log_msg(const char* msg) {
 }
 
 uint8_t init_ssd(void) {
-
     /* 전역 변수 초기화 */
     memset(SSD, 0, sizeof(block_t) * NUM_BLOCK);
     memset(used, 0, sizeof(uint32_t) * NUM_META_BLOCK);
