@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
-#include "ssd/ssd.h"
+#include "ssd.h"
 
 int main(int argc, char* argv[]) {
     char op = argv[0][0];
