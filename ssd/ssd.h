@@ -17,7 +17,6 @@
 #endif
 
 #define LOG 1
-
 #define DIRTY_THRESHOLD 5
 #define NUM_BLOCK 100
 #define NUM_META_BLOCK 4

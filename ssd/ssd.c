@@ -14,7 +14,10 @@ ret_t write_block(uint8_t addr, int32_t data) {
         return WRITE_OUT_OF_INDEX;
     }
 
-    SSD.used[addr] = true;
+    int q = addr / 32;
+    int r = addr % 32;
+    SSD.used[q] |= (0x1 << r);
+    SSD.block[q].data |= (0x1 << r);
     SSD.block[addr].data = data;
     ret_t result = flush_ssd();
 
@@ -88,7 +91,7 @@ ret_t read_block(uint8_t addr, int32_t* out_data) {
     *out_data = SSD.block[addr].data;
 
     //result.txt에 기록 (덮어 씌우는 방식)
-    FILE* fp_res = fopen("result.txt", "w");
+    FILE* fp_res = fopen("result.txt", "wb+");
     if (fp_res != NULL) {
         fprintf(fp_res, "0x%08X\n", *out_data); 
         fclose(fp_res);

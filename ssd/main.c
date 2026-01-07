@@ -10,13 +10,12 @@ int main(int argc, char* argv[]) {
     uint8_t addr = (uint8_t)atoi(argv[2]);
     
     int32_t value = 0;
-
     switch (op) {
     case 'R':
         read_block(addr, &value);
         return value;
     case 'W':
-        value = (int32_t)atoi(argv[3]);
+        value = (int32_t)strtoul(argv[3], NULL, 0);
         return write_block(addr, value);
     case 'D':
         return delete_block(addr);
