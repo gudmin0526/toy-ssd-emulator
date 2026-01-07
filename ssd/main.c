@@ -22,6 +22,8 @@ int main(int argc, char* argv[]) {
         write_block(addr, value);
     case 'D':
         delete_block(addr);
+    case 'FR':
+        fullread_block();
     default:
         break;
     }
