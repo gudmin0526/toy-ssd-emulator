@@ -1,9 +1,7 @@
-#ifndef SSD_H
-#define SSD_H
+#ifndef __SSD_H__
+#define __SSD_H
 
-#include <stdint.h>
-
-#define SSD_SIZE 100
+#define MAX_SIZE 100
 
 typedef struct block {
 	int32_t data;
@@ -12,5 +10,7 @@ typedef struct block {
 uint8_t write_block (uint8_t addr, int32_t data);
 uint8_t read_block  (uint8_t addr, int32_t* out_data);
 uint8_t delete_block(uint8_t addr);
+
+void dump(void);
 
 #endif
