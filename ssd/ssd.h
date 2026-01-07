@@ -62,4 +62,9 @@ ret_t write_block(uint8_t addr, int32_t data);
 ret_t read_block  (uint8_t addr, int32_t* out_data);
 ret_t delete_block(uint8_t addr);
 
+/* 테스트를 위한 helper functions */
+ssd_t* get_ssd(void) {
+    return &SSD;
+}
+
 #endif

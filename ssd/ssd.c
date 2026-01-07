@@ -6,6 +6,7 @@ static uint32_t log_seq = 0;
 static void log_msg(const char* msg);
 static ret_t flush_ssd(void);
 static uint8_t integrity_check(void);
+ssd_t* get_ssd(void);
 
 ret_t write_block(uint8_t addr, int32_t data) {
     // SSD[addr].data = data;
@@ -136,4 +137,8 @@ static ret_t flush_ssd(void) {
 
 static uint8_t integrity_check(void) {
 
+}
+
+ssd_t* get_ssd(void) {
+    return &SSD;
 }
