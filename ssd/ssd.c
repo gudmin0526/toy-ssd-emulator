@@ -1,20 +1,42 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 #include "ssd.h"
 
 static ssd_t SSD;
-/* write, delete 업데이트 발생 시 1 증가 */
 static uint32_t log_seq = 0;
 
+bool get_used(uint8_t addr) {
+    uint8_t idx = addr / 32;
+    uint8_t sub_idx = addr % 32;
+
+    return ((SSD.used[idx] >> sub_idx) & 1);
+}
+
+void set_used(uint8_t addr) {
+    uint8_t idx = addr / 32;
+    uint8_t sub_idx = addr % 32;
+
+    SSD.used[idx] |= (1 << sub_idx);
+    SSD.block[idx].data |= (1 << sub_idx);
+}
+
+void clear_used(uint8_t addr) {
+    uint8_t idx = addr / 32;
+    uint8_t sub_idx = addr % 32;
+
+    SSD.used[idx] &= ~(1 << sub_idx);
+    SSD.block[idx].data &= ~(1 << sub_idx);
+}
+
 ret_t write_block(uint8_t addr, int32_t data) {
-    // SSD[addr].data = data;
     if ((addr < NUM_META_BLOCK) || (addr >= NUM_BLOCK)) {
         printf("write_block: write out of index!\n");
-        return WRITE_OUT_OF_INDEX;
+        return WRITE_FAIL_OUT_OF_INDEX;
     }
 
-    SSD.used[addr] = true;
+    set_used(addr);
     SSD.block[addr].data = data;
     ret_t result = flush_ssd();
 
@@ -23,7 +45,6 @@ ret_t write_block(uint8_t addr, int32_t data) {
         return WRITE_FAIL;
     }
 
-    // printf("write_block: addr: %d, data: %d\n", addr, SSD[addr].data);
     printf("write_block: addr: %d, data: %d\n", addr, SSD.block[addr].data);
     return result;
 }
@@ -39,6 +60,7 @@ static void log_msg(const char* msg) {
 ret_t init_ssd(void) {
     /* 전역 변수 초기화 */
     memset(SSD.block, 0, sizeof(block_t) * NUM_BLOCK);
+    memset(SSD.used, 0, sizeof(uint32_t) * NUM_META_BLOCK);
 
     /* 파일 오픈 */
     FILE *ssd_fp = fopen("ssd.txt", "rb+");
@@ -48,7 +70,7 @@ ret_t init_ssd(void) {
         ssd_fp = fopen("ssd.txt", "wb+");
         if (ssd_fp == NULL) {
             /* 생성도 실패했으면 실패 반환 */
-            return 1;
+            return INIT_FAIL;
         }
     }
 
@@ -59,11 +81,12 @@ ret_t init_ssd(void) {
     for (size_t i = 0; i < NUM_META_BLOCK; i++) {
         SSD.used[i] = (uint32_t)SSD.block[i].data;
     }
+
     fclose(ssd_fp);
 
     sleep_ms(1000);
 
-    return 0;
+    return SSD_OK;
 }
 
 static ret_t flush_ssd(void) {
@@ -85,7 +108,7 @@ static uint8_t integrity_check(void) {
 }
 
 ret_t delete_block(uint8_t addr) {
-    ret_t result = SSD.used[addr] ? SSD_OK : DELETE_FAIL_NOT_IN_USED;
+    ret_t result = get_used(addr) ? SSD_OK : DELETE_FAIL_NOT_IN_USED;
 
     if (result != SSD_OK) {
         printf("delete_block: block not in used!\n");
@@ -99,7 +122,9 @@ ret_t delete_block(uint8_t addr) {
         return DELETE_FAIL_CLEAR_FAILED;
     }
 
-    SSD.used[addr] = false;
+    clear_used(addr);
+
+    flush_ssd();
 
     return result;
 }
@@ -107,7 +132,7 @@ ret_t delete_block(uint8_t addr) {
 ret_t read_block(uint8_t addr, int32_t* out_data) {
     // 유효성 검사
     if (addr >= NUM_BLOCK) {
-        return 1; // Error: return 1 
+        return READ_FAIL_OUT_OF_INDEX; // Error: return 1 
     }
 
     // 데이터를 출력 파라미터에 저장
@@ -125,7 +150,7 @@ ret_t read_block(uint8_t addr, int32_t* out_data) {
     sprintf(log_buf, "Read Address: %d, Data: 0x08X", addr, *out_data);
     log_msg(log_buf);
     
-    return 0;
+    return SSD_OK;
 }
 
 void dump(void) {

@@ -24,10 +24,13 @@
 
 typedef enum ret {
 	SSD_OK = 0,
-	WRITE_FAIL = 1,
-	WRITE_OUT_OF_INDEX = 2,
-	DELETE_FAIL_NOT_IN_USED = 3,
-	DELETE_FAIL_CLEAR_FAILED = 4,
+	INIT_FAIL = 1,
+	WRITE_FAIL = 2,
+	WRITE_FAIL_OUT_OF_INDEX = 3,
+	READ_FAIL_OUT_OF_INDEX = 4,
+	DELETE_FAIL_NOT_IN_USED = 5,
+	DELETE_FAIL_CLEAR_FAILED = 6,
+
 } ret_t;
 
 typedef struct block {
@@ -49,7 +52,7 @@ typedef struct ssd_controller {
 } ssd_controller_t;
 
 typedef struct ssd {
-	bool used[NUM_META_BLOCK];
+	uint32_t used[NUM_META_BLOCK];
 	block_t block[NUM_BLOCK];
 } ssd_t;
 
@@ -58,7 +61,13 @@ ret_t init_ssd(void);
 
 /* CRUD */
 ret_t write_block(uint8_t addr, int32_t data);
-ret_t read_block  (uint8_t addr, int32_t* out_data);
+ret_t read_block(uint8_t addr, int32_t* out_data);
 ret_t delete_block(uint8_t addr);
+
+static ret_t flush_ssd(void);
+
+bool get_used(uint8_t addr);
+void set_used(uint8_t addr);
+void clear_used(uint8_t addr);
 
 #endif
