@@ -4,3 +4,5 @@ main.out
 Info.plist
 main.out.yml
 nand.txt
+*.exe
+ssd.exe
