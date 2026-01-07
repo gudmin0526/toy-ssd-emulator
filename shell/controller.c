@@ -42,7 +42,7 @@ void execute_ssd(char *args)
 
 void do_read(char *lba)
 {
-    if (!is_valid_lba(*lba))
+    if (!is_valid_lba(lba))
     {
         printf("INVALID ADDRESS\n (0~99 allowed)\n");
         return;
@@ -52,18 +52,26 @@ void do_read(char *lba)
     sprintf(args, "R %s", lba);
     execute_ssd(args);
 
-    // ssd가 result.txt에 쓴 걸 읽어와서 출력
+    // ssd가 result.txt에 쓴 걸 읽어와서 출력*
     FILE *fp = fopen("result.txt", "r");
-    if (fp != NULL)
+
+    if (fp == NULL)
     {
-        char buffer[100];
-        if (fgets(buffer, sizeof(buffer), fp) != NULL)
-        {
-            printf("%s", buffer);
-        }
-        printf("\n");
-        fclose(fp);
+        printf("File open error\n");
+        return;
     }
+
+    char buffer[100];
+    if (fgets(buffer, sizeof(buffer), fp) == NULL)
+    {
+        printf("Read error\n");
+        fclose(fp);
+        return;
+    }
+
+    printf("%s", buffer);
+    printf("\n");
+    fclose(fp);
 }
 
 void do_write(char *lba, char *val)
