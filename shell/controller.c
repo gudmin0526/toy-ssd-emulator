@@ -36,7 +36,7 @@ int is_valid_value(char *str)
 void execute_ssd(char *args)
 {
     char cmd[200];
-    sprintf(cmd, "ssd %s", args);
+    sprintf(cmd, ".\\ssd.exe %s", args);
     system(cmd);
 }
 
