@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
 #include "ssd.h"
 
 static ssd_t SSD;
@@ -106,8 +103,8 @@ ret_t delete_block(uint8_t addr) {
 
 ret_t read_block(uint8_t addr, int32_t* out_data) {
     // 유효성 검사
-    if (addr >= NUM_BLOCK) {
-        return 1; // Error: return 1 
+    if (addr < NUM_META_BLOCK || addr >= NUM_BLOCK) {
+        return READ_OUT_OF_INDEX;
     }
 
     // 데이터를 출력 파라미터에 저장
