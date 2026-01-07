@@ -63,6 +63,10 @@ int main()
         {
             run_testapp2();
         }
+        else if(strcmp(cmd, "exit") == 0)
+        {
+            break;
+        }
         else
         {
             printf("INVALID COMMAND\n");

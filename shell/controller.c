@@ -42,16 +42,17 @@ void execute_ssd(char *args)
 
 //---------- 명령 처리(임시) -------------
 
-void do_read(char *lba)
+void do_read(char *str)
 {
-    if (!is_valid_lba(lba))
+    if (!is_valid_lba(*str))
     {
         printf("INVALID COMMAND\n");
         return;
     }
 
+    int lba = atoi(str);
     char args[50];
-    sprintf(args, "R %s", lba);
+    sprintf(args, "R %d", lba);
     execute_ssd(args);
 
     // ssd가 result.txt에 쓴 걸 읽어와서 출력
@@ -76,7 +77,10 @@ void do_write(char *lba, char *val)
         return;
     }
     char args[100];
-    sprintf(args, "W %s %s", lba, val);
+
+    int i = atoi(lba);
+    int j = atoi(val);
+    sprintf(args, "W %d %d", i, j);
     execute_ssd(args);
 }
 
@@ -89,7 +93,8 @@ void do_delete(char *lba)
     }
 
     char args[100];
-    sprintf(args, "W %s 0x00000000", lba);
+    int i = atoi(lba);
+    sprintf(args, "W %d 0x00000000", i);
 
     execute_ssd(args);
 }
@@ -102,7 +107,10 @@ void do_fullwrite(char *lba, char *val)
         return;
     }
     char args[100];
-    sprintf(args, "W %s %s", lba, val);
+
+    int i = atoi(lba);
+    int j = atoi(val);
+    sprintf(args, "W %d %d", i, j);
     execute_ssd(args);
 }
 
@@ -115,7 +123,8 @@ void do_fullread(char *lba)
     }
 
     char args[50];
-    sprintf(args, "R %s", lba);
+    int i = atoi(lba);
+    sprintf(args, "R %d", i);
     execute_ssd(args);
 
     // ssd가 result.txt에 쓴 걸 읽어와서 출력
@@ -158,7 +167,7 @@ void run_testapp1()
         char lba[10];
         sprintf(lba, "%d", i);
     }
-    printf("--- TestApp2 Pass ---\n");
+    printf("--- TestApp Pass ---\n");
 }
 
 void run_testapp2()
