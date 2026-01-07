@@ -40,13 +40,11 @@ void execute_ssd(char *args)
     system(cmd);
 }
 
-//---------- 명령 처리(임시) -------------
-
 void do_read(char *str)
 {
     if (!is_valid_lba(*str))
     {
-        printf("INVALID ADDRESS\n");
+        printf("INVALID ADDRESS\n (0~99 allowed)\n");
         return;
     }
 
@@ -73,7 +71,7 @@ void do_write(char *lba, char *val)
 {
     if (!is_valid_lba(lba))
     {
-        printf("INVALID ADDRESS\n");
+        printf("INVALID ADDRESS\n (0~99 allowed)\n");
         return;
     }
 
@@ -95,7 +93,7 @@ void do_delete(char *lba)
 {
     if (!is_valid_lba(lba))
     {
-        printf("INVALID ADDRESS\n");
+        printf("INVALID ADDRESS\n (0~99 allowed)\n");
         return;
     }
 
@@ -110,7 +108,7 @@ void do_fullwrite(char *val)
 {
     if (!is_valid_value(val))
     {
-        printf("INVALID VALUE\n");
+        printf("INVALID VALUE\n (0x00000000 ~ 0xFFFFFFFF allowed)\n");
         return;
     }
     char args[100];
@@ -144,13 +142,26 @@ void run_testapp1()
 {
     printf("--- TestApp1 Start ---\n");
 
+    do_fullwrite("0x12345678");
+    do_fullread();
+
+    printf("--- TestApp1 Pass ---\n");
+}
+
+void run_testapp2()
+{
+    char *write_value = "0xAAAABBBB";
+    char *over_write_value = "0x12345678";
+
+    printf("--- TestApp2 Start ---\n");
+
     for (int loop = 0; loop < 30; loop++)
     {
         for (int i = 0; i <= 5; i++)
         { // LBA 0 ~ 5
             char lba[10];
             sprintf(lba, "%d", i);
-            do_write(lba, "0xAAAABBBB");
+            do_write(lba, write_value);
         }
     }
 
@@ -158,7 +169,7 @@ void run_testapp1()
     {
         char lba[10];
         sprintf(lba, "%d", i);
-        do_write(lba, "0x12345678");
+        do_write(lba, over_write_value);
     }
 
     for (int i = 0; i <= 5; i++)
@@ -166,15 +177,5 @@ void run_testapp1()
         char lba[10];
         sprintf(lba, "%d", i);
     }
-    printf("--- TestApp Pass ---\n");
-}
-
-void run_testapp2()
-{
-    printf("--- TestApp2 Start ---\n");
-
-    do_fullwrite("0x12345678");
-    do_fullread();
-
     printf("--- TestApp2 Pass ---\n");
 }
