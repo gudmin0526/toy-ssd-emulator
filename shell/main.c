@@ -54,15 +54,15 @@ int main()
             {
                 do_fullread();
             }
+            else if (strcmp(mode, "D") == 0)
+            {
+                char *lba = strtok(NULL, " ");
+                do_delete(lba);
+            }
             else
             {
                 printf("INVALID COMMAND\n");
             }
-        }
-        else if (strcmp(cmd, "delete") == 0)
-        {
-            char *lba = strtok(NULL, " ");
-            do_delete(lba);
         }
         else if (strcmp(cmd, "testapp1") == 0)
         {
