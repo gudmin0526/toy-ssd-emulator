@@ -16,7 +16,6 @@ ret_t write_block(uint8_t addr, int32_t data) {
 
     int q = addr / 32;
     int r = addr % 32;
-    SSD.used[q] |= (0x1 << r);
     SSD.block[q].data |= (0x1 << r);
     SSD.block[addr].data = data;
     ret_t result = flush_ssd();
@@ -62,21 +61,22 @@ ret_t init_ssd(void) {
 }
 
 ret_t delete_block(uint8_t addr) {
-    ret_t result = SSD.used[addr] ? SSD_OK : DELETE_FAIL_NOT_IN_USED;
-
+    int q = addr / 32;
+    int r = addr % 32;
+    ret_t result = ((SSD.block[q].data & (0x1 << r)) == (0x1 << r)) ? SSD_OK : DELETE_FAIL_NOT_IN_USED;
     if (result != SSD_OK) {
         printf("delete_block: block not in used!\n");
         return DELETE_FAIL_NOT_IN_USED;
     }
 
     result = write_block(addr, 0);
+    SSD.block[q].data ^= (0x1 << r);
 
     if (result != SSD_OK) {
         printf("delete_block: delete failed!\n");
         return DELETE_FAIL_CLEAR_FAILED;
     }
-
-    SSD.used[addr] = false;
+    flush_ssd();
 
     return result;
 }
