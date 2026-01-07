@@ -48,7 +48,8 @@ ret_t init_ssd(void) {
     }
 
     /* 파일을 SSD 배열로 읽어온다 */
-    fread(SSD.block, sizeof(block_t), NUM_BLOCK, ssd_fp);
+    size_t n_read = fread(SSD.block, sizeof(block_t), NUM_BLOCK, ssd_fp);
+    (void)n_read;
 
     /* used 배열로 읽어온다. */
     for (size_t i = 0; i < NUM_META_BLOCK; i++) {
