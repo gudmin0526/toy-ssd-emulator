@@ -27,7 +27,7 @@ ret_t write_block(uint8_t addr, int32_t data) {
     }
 
     // printf("write_block: addr: %d, data: %d\n", addr, SSD[addr].data);
-    printf("write_block: addr: %d, data: %d\n", addr, SSD.block[addr].data);
+    // printf("write_block: addr: %d, data: %d\n", addr, SSD.block[addr].data);
     return result;
 }
 
@@ -48,7 +48,7 @@ ret_t init_ssd(void) {
     }
 
     /* 파일을 SSD 배열로 읽어온다 */
-    size_t n_read = fread(SSD.block, sizeof(block_t), NUM_BLOCK, ssd_fp);
+    fread(SSD.block, sizeof(block_t), NUM_BLOCK, ssd_fp);
 
     /* used 배열로 읽어온다. */
     for (size_t i = 0; i < NUM_META_BLOCK; i++) {
@@ -100,7 +100,7 @@ ret_t read_block(uint8_t addr, int32_t* out_data) {
 
     // 주소값이랑 데이터 값 출력
     char log_buf[50];
-    sprintf(log_buf, "Read Address: %d, Data: 0x08X", addr, *out_data);
+    sprintf(log_buf, "Read Address: %d, Data: %0x08X", addr, *out_data);
     log_msg(log_buf);
     
     return 0;
@@ -109,16 +109,9 @@ ret_t read_block(uint8_t addr, int32_t* out_data) {
 static void log_msg(const char* msg) {
 #if LOG
     FILE *log_fp = fopen("ssd.log", "a");
-    fprintf(log_fp, "[%lld] %s\n", log_seq, msg);
+    fprintf(log_fp, "[%u] %s\n", log_seq, msg);
     fclose(log_fp);
 #endif
-}
-
-static void dump(void) {
-    printf("---dump---\n");
-    for (int i = 0; i < MAX_SIZE; ++i) {
-        printf("%d: %d\n", i, SSD.block[i].data);
-    }
 }
 
 static ret_t flush_ssd(void) {
@@ -132,11 +125,13 @@ static ret_t flush_ssd(void) {
     fwrite(SSD.block, sizeof(block_t), NUM_BLOCK, ssd_fp);
     fclose(ssd_fp);
 
+    integrity_check();
+
     return SSD_OK;
 }
 
 static uint8_t integrity_check(void) {
-
+    return 1;
 }
 
 ssd_t* get_ssd(void) {
