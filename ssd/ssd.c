@@ -131,7 +131,7 @@ static ret_t flush_ssd(void) {
 }
 
 static uint8_t integrity_check(void) {
-    return 1;
+    return 2;
 }
 
 ssd_t* get_ssd(void) {
